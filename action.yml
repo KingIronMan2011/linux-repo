@@ -1,0 +1,50 @@
+name: Publish Linux package
+description: Upload a native Debian, RPM, or Arch package to repo.kingironman.dev.
+inputs:
+  format:
+    description: debian, rpm, or arch
+    required: true
+  package:
+    description: Path to the native package file
+    required: true
+  token:
+    description: The LINUX_REPO_PUBLISH_TOKEN GitHub Actions secret
+    required: true
+  release:
+    description: Fedora release, required for RPM uploads
+    required: false
+  arch:
+    description: Package architecture, required for RPM and Arch uploads
+    required: false
+  signature:
+    description: Optional detached .sig file for an Arch package
+    required: false
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        INPUT_FORMAT: ${{ inputs.format }}
+        INPUT_PACKAGE: ${{ inputs.package }}
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_RELEASE: ${{ inputs.release }}
+        INPUT_ARCH: ${{ inputs.arch }}
+        INPUT_SIGNATURE: ${{ inputs.signature }}
+      run: |
+        set -euo pipefail
+        endpoint="https://repo.kingironman.dev/api/v1/packages/${INPUT_FORMAT}"
+        case "$INPUT_FORMAT" in
+          debian) query="" ;;
+          rpm)
+            test -n "$INPUT_RELEASE" && test -n "$INPUT_ARCH"
+            query="?release=${INPUT_RELEASE}&arch=${INPUT_ARCH}"
+            ;;
+          arch)
+            test -n "$INPUT_ARCH"
+            query="?arch=${INPUT_ARCH}"
+            ;;
+          *) echo "format must be debian, rpm, or arch" >&2; exit 2 ;;
+        esac
+        args=(-fsS --fail-with-body -X POST "${endpoint}${query}" -H "Authorization: Bearer ${INPUT_TOKEN}" -F "package=@${INPUT_PACKAGE}")
+        if [ -n "$INPUT_SIGNATURE" ]; then args+=(-F "signature=@${INPUT_SIGNATURE}"); fi
+        curl "${args[@]}"
