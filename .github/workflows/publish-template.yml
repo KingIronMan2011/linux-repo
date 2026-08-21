@@ -1,0 +1,17 @@
+name: Publish package template
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish an existing Debian package
+        env:
+          PUBLISH_TOKEN: ${{ secrets.LINUX_REPO_PUBLISH_TOKEN }}
+        run: |
+          # Replace this path with the package produced by your build job.
+          curl --fail-with-body -X POST https://repo.kingironman.dev/api/v1/packages/debian \
+            -H "Authorization: Bearer $PUBLISH_TOKEN" \
+            -F package=@dist/example_1.0.0_amd64.deb
