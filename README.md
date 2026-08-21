@@ -36,6 +36,30 @@ https://repo.kingironman.dev/keys/linux-repo.asc
 https://repo.kingironman.dev/keys/linux-repo.gpg
 ```
 
+## GitHub Actions: publish a complete release
+
+The reusable action accepts one JSON manifest, so a single Tauri release job
+can upload every native artifact after its build finishes. Add this file to the
+package repository as `linux-repo-manifest.json` (paths are relative to the
+workflow workspace):
+
+```json
+[
+  { "format": "debian", "package": "src-tauri/target/release/bundle/deb/my-app_1.0.0_amd64.deb" },
+  { "format": "rpm", "package": "src-tauri/target/release/bundle/rpm/my-app-1.0.0-1.x86_64.rpm", "release": "41", "arch": "x86_64" },
+  { "format": "arch", "package": "dist/my-app-1.0.0-1-x86_64.pkg.tar.zst", "arch": "x86_64" }
+]
+```
+
+Then publish all entries with one step:
+
+```yaml
+- uses: KingIronMan2011/linux-repo@main
+  with:
+    token: ${{ secrets.LINUX_REPO_PUBLISH_TOKEN }}
+    manifest: linux-repo-manifest.json
+```
+
 ## Dokploy configuration
 
 Create an Application from this repository, map `repo.kingironman.dev` to port
