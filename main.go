@@ -58,6 +58,11 @@ func (s *server) initialize() error {
 		filepath.Join(s.dataDir, "keys"),
 		filepath.Join(s.dataDir, "incoming"),
 		filepath.Join(s.dataDir, "debian", "conf"),
+		filepath.Join(s.dataDir, "debian", "dists"),
+		filepath.Join(s.dataDir, "debian", "pool"),
+		filepath.Join(s.dataDir, "rpm", "fedora"),
+		filepath.Join(s.dataDir, "arch", "x86_64"),
+		filepath.Join(s.dataDir, "arch", "aarch64"),
 		filepath.Join(s.dataDir, ".gnupg"),
 	} {
 		if err := os.MkdirAll(dir, 0700); err != nil {
