@@ -1,2 +1,7 @@
-.git
-README.md
+# Send only the inputs named by Dockerfile COPY instructions. This prevents
+# release artifacts, manifests, local .env files, and accidental private keys
+# from entering the Docker build context.
+*
+!go.mod
+!go.sum
+!main.go
