@@ -38,7 +38,7 @@ runs:
               ;;
             *) echo "format must be debian, rpm, or arch" >&2; exit 2 ;;
           esac
-          curl -fsS --fail-with-body -X POST "${endpoint}${query}" \
+          curl -sS --fail-with-body -X POST "${endpoint}${query}" \
             -H "Authorization: Bearer ${INPUT_TOKEN}" \
             -F "package=@${package}"
         done < <(jq -c '.[]' "$INPUT_MANIFEST")
