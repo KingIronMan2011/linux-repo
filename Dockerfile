@@ -8,7 +8,7 @@ RUN CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o /linux-repo .
 FROM debian:bookworm-slim
 
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y ca-certificates createrepo-c gnupg makepkg pacman-package-manager reprepro \
+    && apt-get install --no-install-recommends -y ca-certificates createrepo-c gnupg libarchive-tools makepkg pacman-package-manager reprepro \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /linux-repo /usr/local/bin/linux-repo
