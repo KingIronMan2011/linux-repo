@@ -198,7 +198,7 @@ func (s *server) uploadArch(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "could not store Arch package", http.StatusInternalServerError)
 		return
 	}
-	if err := run("", "repo-add", "--include-sigs", filepath.Join(repoDir, "linux-repo.db.tar.zst"), target); err != nil {
+	if err := run("", "repo-add", filepath.Join(repoDir, "linux-repo.db.tar.zst"), target); err != nil {
 		http.Error(w, "could not update pacman metadata", http.StatusInternalServerError)
 		return
 	}
